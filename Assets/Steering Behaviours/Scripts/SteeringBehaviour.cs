@@ -11,14 +11,14 @@ namespace Steering
         public void UpdateAgent(SteeringAgent _agent)
         {
             // Calculate the new force and apply it to the agent
-            Vector3 force = Calculate(_agent);
+            Vector3 force = Calculate(_agent).normalized;
             _agent.UpdateCurrentForce(force);
 
             // Calculate the rotation using Slerp, the current rotation and the force for the target
             Quaternion rotation = Quaternion.Slerp(
                 _agent.Rotation,
                 Quaternion.LookRotation(_agent.CurrentForce != Vector3.zero ? _agent.CurrentForce : _agent.Forward),
-                Time.deltaTime);
+                Time.deltaTime * 10f);
 
             // Calculate the position by finding the correct movement then damping the difference
             Vector3 movement = (_agent.Forward + force * _agent.Speed) * Time.deltaTime;
@@ -36,6 +36,6 @@ namespace Steering
         /// The function that the behaviours need to override to calculate
         /// their forces for the agent.
         /// </summary>
-        protected abstract Vector3 Calculate(SteeringAgent _agent);
+        public abstract Vector3 Calculate(SteeringAgent _agent);
     }
 }

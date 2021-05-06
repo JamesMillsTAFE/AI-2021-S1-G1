@@ -38,5 +38,16 @@ namespace Steering
             transform.localPosition = _pos;
             transform.localRotation = _rot;
         }
+
+        // Implement this OnDrawGizmosSelected if you want to draw gizmos only if the object is selected
+        private void OnDrawGizmosSelected()
+        {
+            Gizmos.color = Color.blue;
+
+            foreach(Vector3 direction in SteeringAgentHelper.DirectionsInCone(this, true))
+            {
+                Gizmos.DrawSphere(transform.position + direction, .1f);
+            }
+        }
     }
 }

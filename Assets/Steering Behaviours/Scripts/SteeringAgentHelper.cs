@@ -1,12 +1,43 @@
 using UnityEngine;
 
+using System.Collections.Generic;
+
 namespace Steering
 {
     public static class SteeringAgentHelper
     {
-        const int viewDirections = 100;
+        const int viewDirections = 250;
 
         public static readonly Vector3[] directions;
+        private static Vector3[] coneDirections = null;
+
+        // Default parameters are parameters that don't need to specifically be passed in,
+        // if they aren't, the set value will be used, otherwise the one passed in will be.
+        // Default parameters also MUST be at the end of the parameter list
+        public static Vector3[] DirectionsInCone(SteeringAgent _agent, bool _forceRecalculate = false)
+        {
+            // Determine if this function hasn't been run before
+            if(coneDirections == null || _forceRecalculate)
+            {
+                List<Vector3> newDirections = new List<Vector3>();
+                // Loop through every direction that has already been calculated in the sphere
+                foreach (Vector3 direction in directions)
+                {
+                    // Calculate the angle between the forward of the agent
+                    // and this direction... if it is less than the view angle, we can add
+                    // it to the list
+                    if(Vector3.Angle(direction, _agent.Forward) < _agent.ViewAngle)
+                    {
+                        newDirections.Add(direction);
+                    }
+                }
+
+                // Copy the directions found into the coneDirections array
+                coneDirections = newDirections.ToArray();
+            }
+
+            return coneDirections;
+        }
 
         static SteeringAgentHelper()
         {
